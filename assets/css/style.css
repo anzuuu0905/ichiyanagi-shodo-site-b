@@ -1136,3 +1136,144 @@ ul, ol { padding: 0; list-style: none; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* =============================================================
+   QA v4 (2026-06-11) — 日本語段落ち対策（Pattern B）
+   ・word-break: keep-all で連語を維持
+   ・line-break: strict で句読点を行頭/行末禁止
+   ・電話番号・住所・固有名詞は nowrap
+   ============================================================= */
+
+/* ---- グローバル日本語連語非破壊 ---- */
+h1, h2, h3, h4, h5, h6,
+p, blockquote, li, dd, dt, figcaption,
+.btn, button {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+}
+
+/* ---- Hero ---- */
+.hero__title {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+  /* 「とってきました」分断防止のため字間圧縮 */
+  letter-spacing: 0.04em;
+}
+.hero__sub {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.hero__eyebrow {
+  white-space: nowrap;
+}
+
+/* ---- セクション見出し ---- */
+.section-head h2,
+.teacher__quote,
+.cta__title {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+  letter-spacing: 0.06em;
+}
+
+/* ---- カード本文／リード ---- */
+.greeting__body p,
+.why-card__desc,
+.course-card__desc,
+.voice-card__text,
+.cta__lead,
+.section-lead,
+.classroom-card__info,
+.schedule__legend,
+.hero__sub {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+}
+
+/* ---- 連語・固有名詞・受賞名は nowrap で塊保持 ---- */
+.achv__year, .achv__item,
+.classroom-card__name,
+.brand__name, .brand__sub,
+.cta__phone-num, .cta__phone-label,
+.hero__meta-label, .hero__meta-value,
+.schedule__time, .schedule__closed,
+.course-card__title, .course-card__label, .course-card__meta {
+  white-space: nowrap;
+}
+
+/* ---- 電話番号 ---- */
+.cta__phone-num,
+a[href^="tel:"] {
+  white-space: nowrap;
+}
+
+/* ---- Greeting の dd「優秀団体賞 指導」分断対策 ---- */
+.greeting dd, .greeting__signature {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* ---- 住所町名（平田町野寺 等）は塊で ---- */
+.classroom-card__info dd .num,
+.classroom-card__info dt + dd {
+  word-break: keep-all;
+}
+
+/* ---- モバイル: 見出しの widow 防止 ---- */
+@media (max-width: 480px) {
+  .hero__title {
+    font-size: clamp(1.5rem, 7.4vw, 2rem);
+    letter-spacing: 0.02em;
+    line-height: 1.45;
+  }
+  .hero__sub {
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+  }
+  .hero__eyebrow {
+    white-space: normal;
+    letter-spacing: 0.25em;
+  }
+  .section-head h2 {
+    font-size: clamp(1.4rem, 5.5vw, 1.7rem);
+    letter-spacing: 0.04em;
+  }
+  .teacher__quote,
+  .cta__title {
+    font-size: clamp(1.3rem, 5.2vw, 1.55rem);
+    letter-spacing: 0.02em;
+  }
+  /* widow 残対策: 本文の字間を更に詰めて句点・末尾語 widow を防ぐ */
+  .greeting__body p,
+  .why-card__desc,
+  .course-card__desc,
+  .voice-card__text,
+  .cta__lead,
+  .section-lead {
+    letter-spacing: 0.005em;
+  }
+  /* 引用 max-width で widow 緩和 */
+  .voice-card__text {
+    max-width: 24em;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 414px) {
+  /* hero タイトル「ました」分断を防ぐ最終フォールバック
+     既存の max-width: 16ch / letter-spacing: 0.06em が分断原因 → 解除 */
+  .hero__title {
+    font-size: clamp(1.4rem, 7vw, 1.85rem);
+    letter-spacing: 0;
+    line-height: 1.5;
+    max-width: none;
+  }
+  .cta__title {
+    font-size: clamp(1.15rem, 4.7vw, 1.4rem);
+    letter-spacing: 0;
+  }
+}
